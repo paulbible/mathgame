@@ -1,2 +1,5 @@
 venv
 .idea
+__pycache__
+data/quiz.aux
+data/quiz.log

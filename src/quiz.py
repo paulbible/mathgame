@@ -1,9 +1,10 @@
 """A program to generate a random quiz
 """
 import sympy
-from src.mathqtools import SimplePoly1Generator
+from src.mathqtools import SimplePoly1Generator, SimplePoly2Generator
 
-def quiz_preamble():
+def quiz_preamble(course='MAT', section=101,desc="Mathematics", quiz="Quiz 1", points_each=1):
+    use_course = course + ' ' + str(section)
     pre = '''\\documentclass[10pt]{examdesign}
 \\usepackage{amsmath}
 \\usepackage{pifont}
@@ -16,8 +17,8 @@ def quiz_preamble():
 \\DefineAnswerWrapper{}{}
 \\NumberOfVersions{1}
 
-\\class{{\\Large CATS 171: Procedural Programming}}
-\\examname{Exam 1, 100 points}
+\\class{{\\Large %s: %s}}
+\\examname{%s}
 
 \\makeatletter
 \\renewcommand\\namedata{
@@ -26,13 +27,17 @@ def quiz_preamble():
 \\makeatother
 
 \\begin{document}
-'''
+''' % (use_course, desc, quiz)
     return pre
 
 
-def start_question_block():
-    block = '''\\begin{shortanswer}[title={Short Answer (4 points each)}, rearrange=no,resetcounter=no,suppressprefix]
-    '''
+def start_question_block(points_each=1):
+    if points_each > 1:
+        point_msg = str(points_each) + ' points each'
+    else:
+        point_msg = str(points_each) + ' point each'
+    block = '''\\begin{shortanswer}[title={Short Answer (%s)}, rearrange=no,resetcounter=no,suppressprefix]
+    ''' % point_msg
     return block
 
 
@@ -43,10 +48,10 @@ def end_question_block():
 
 def print_question(expr):
     question = '''\\begin{question}
-	%s
+	$%s$
 	\\vspace{1cm}
 	\\begin{answer}
-		%s
+		\{%s\}
 	\\end{answer}
 \\end{question}'''%(sympy.latex(expr), sympy.solveset(expr))
     return question
@@ -58,16 +63,20 @@ def end_document():
 
 def main():
     qGen = SimplePoly1Generator()
+    qGen2 = SimplePoly2Generator()
     doc = ''
     doc += quiz_preamble() + '\n'
     doc += start_question_block() + '\n'
     for i in range(5):
         doc += print_question(qGen.Low_Whole_Eq()) + '\n'
+    doc += print_question(qGen2.Simple_DEGREE2()) + '\n'
     doc += end_question_block() + '\n'
     doc += end_document()
 
-    with open('data/quiz.tex', 'w') as fout:
+    with open('../data/quiz.tex', 'w') as fout:
         fout.write(doc)
+
+    print('Quiz Generated!')
 
 
 main()
