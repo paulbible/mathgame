@@ -1,4 +1,9 @@
 """A program to generate a random quiz
+
+Then convert to pdf using the texlive program pdflatex
+
+On WIndows:
+C:\texlive\2018\bin\win32\pdflatex.exe quiz.tex
 """
 import sympy
 from src.mathqtools import SimplePoly1Generator, SimplePoly2Generator
@@ -47,18 +52,18 @@ def end_question_block():
 
 
 def print_question(expr):
-    question = '''\\begin{question}
+    question = r'''\begin{question}
 	$%s$
-	\\vspace{1cm}
-	\\begin{answer}
+	\vspace{1cm}
+	\begin{answer}
 		\{%s\}
-	\\end{answer}
-\\end{question}'''%(sympy.latex(expr), sympy.solveset(expr))
+	\end{answer}
+\end{question}'''%(sympy.latex(expr), sympy.solveset(expr))
     return question
 
 
 def end_document():
-    return '\\end{document}'
+    return r'\end{document}'
 
 
 def main():
